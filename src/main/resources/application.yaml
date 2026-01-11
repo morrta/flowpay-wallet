@@ -1,3 +1,29 @@
 spring:
   application:
     name: flowpay-wallet
+  flyway:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flowpay_wallet_db
+    username: admin
+    password: admin123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update  # For development only!
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
