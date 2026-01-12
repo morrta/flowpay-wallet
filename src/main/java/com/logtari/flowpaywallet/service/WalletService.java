@@ -1,0 +1,30 @@
+package com.logtari.flowpaywallet.service;
+
+import com.logtari.flowpaywallet.common.WalletNotFoundException;
+import com.logtari.flowpaywallet.entity.Wallet;
+import com.logtari.flowpaywallet.repository.WalletRespository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class WalletService {
+
+    private final WalletRespository walletRespository;
+
+    public UUID createWallet(double initialBalance){
+        Wallet wallet = new Wallet(UUID.randomUUID(), initialBalance, Instant.now(), Instant.now());
+        walletRespository.save(wallet);
+        return wallet.getId();
+    }
+    public void deposit(UUID walletId, double amount){
+        Wallet wallet = walletRespository.findById(walletId).orElseThrow(()->new WalletNotFoundException("No Wallet found with id: %s ".formatted(walletId)));
+        wallet.setBalance(wallet.getBalance() + amount);
+        walletRespository.save(wallet);
+    }
+}
