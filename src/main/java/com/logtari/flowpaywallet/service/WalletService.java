@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -18,7 +19,13 @@ public class WalletService {
     private final WalletRespository walletRespository;
 
     public UUID createWallet(double initialBalance){
-        Wallet wallet = new Wallet(UUID.randomUUID(), initialBalance, Instant.now(), Instant.now());
+        Wallet wallet = Wallet.builder()
+                .id(UUID.randomUUID())
+                .balance(initialBalance)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+
         walletRespository.save(wallet);
         return wallet.getId();
     }
