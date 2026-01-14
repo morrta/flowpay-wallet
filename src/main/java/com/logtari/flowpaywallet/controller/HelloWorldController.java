@@ -17,8 +17,13 @@ public class HelloWorldController {
     public String helloWorld() {
         return "Hello Mohamed Logtari!";
     }
+    @PostMapping
+    public UUID createWallet(@RequestParam double initialBalance){
+        return walletService.createWallet(initialBalance);
+    }
     @PostMapping("/{walletId}/deposit")
     public void deposit(@PathVariable UUID walletId, @RequestParam double amount){
         walletService.deposit(walletId,amount);
     }
+
 }
