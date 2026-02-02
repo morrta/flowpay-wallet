@@ -4,12 +4,13 @@ import com.logtari.flowpaywallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/wallets/")
 @RequiredArgsConstructor
-public class HelloWorldController {
+public class WalletController {
 
     WalletService walletService;
 
@@ -18,11 +19,11 @@ public class HelloWorldController {
         return "Hello Mohamed Logtari!";
     }
     @PostMapping
-    public UUID createWallet(@RequestParam double initialBalance){
+    public UUID createWallet(@RequestParam BigDecimal initialBalance){
         return walletService.createWallet(initialBalance);
     }
     @PostMapping("/{walletId}/deposit")
-    public void deposit(@PathVariable UUID walletId, @RequestParam double amount){
+    public void deposit(@PathVariable UUID walletId, @RequestParam BigDecimal amount){
         walletService.deposit(walletId,amount);
     }
 

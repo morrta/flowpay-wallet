@@ -25,8 +25,8 @@ import java.util.UUID;
 public class Wallet {
     @Id
     private UUID id;
-    @Column
-    private double balance;
+    @Column(precision =  19, scale = 2)
+    private BigDecimal balance;
     @Column
     private Instant createdAt;
     @Column
