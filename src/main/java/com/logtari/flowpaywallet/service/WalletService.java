@@ -31,6 +31,9 @@ public class WalletService {
     @Transactional
     public void deposit(UUID walletId, BigDecimal amount){
         Wallet wallet = walletRespository.findById(walletId).orElseThrow(()->new WalletNotFoundException("No Wallet found with id: %s ".formatted(walletId)));
+        if(amount.signum() < 0){
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
         wallet.setBalance(wallet.getBalance().add(amount));
         walletRespository.save(wallet);
     }

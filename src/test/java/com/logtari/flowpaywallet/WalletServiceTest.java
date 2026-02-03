@@ -52,4 +52,10 @@ public class WalletServiceTest {
         Wallet wallet = walletRespository.findById(walletId).get();
         assertEquals(new BigDecimal("0.00"),wallet.getBalance());
     }
+
+    @Test
+    void deposit_should_reject_negative_amount(){
+        UUID walletId = underTest.createWallet(new BigDecimal("100.00"));
+        assertThrows(IllegalArgumentException.class, ()->underTest.deposit(walletId, new BigDecimal("-50.00")));
+    }
 }
