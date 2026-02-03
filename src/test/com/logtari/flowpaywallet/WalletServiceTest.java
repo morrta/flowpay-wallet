@@ -1,6 +1,7 @@
 package com.logtari.flowpaywallet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.logtari.flowpaywallet.entity.Wallet;
 import com.logtari.flowpaywallet.repository.WalletRespository;
 import com.logtari.flowpaywallet.service.WalletService;
@@ -24,7 +25,7 @@ public class WalletServiceTest {
         UUID walletId = underTest.createWallet(BigDecimal.valueOf(100.00));
         Wallet wallet = walletRespository.findById(walletId).get();
         assertEquals(wallet.getId(), walletId);
-        assertEquals(0,BigDecimal.valueOf(100.00).compareTo(wallet.getBalance()));
+        assertEquals(new BigDecimal("100.00"), wallet.getBalance());
     }
 
     @Test
@@ -32,7 +33,7 @@ public class WalletServiceTest {
         UUID walletId = underTest.createWallet(BigDecimal.valueOf(0));
         underTest.deposit(walletId, BigDecimal.valueOf(100.00));
         Wallet wallet = walletRespository.findById(walletId).get();
-        assertEquals(0,BigDecimal.valueOf(100.00).compareTo(wallet.getBalance()));
+        assertEquals(new BigDecimal("100.00"), wallet.getBalance());
     }
 
     @Test
@@ -42,6 +43,13 @@ public class WalletServiceTest {
         underTest.deposit(walletId, BigDecimal.valueOf(0.2));
 
         Wallet wallet = walletRespository.findById(walletId).get();
-        assertEquals(0,BigDecimal.valueOf(0.3).compareTo(wallet.getBalance()));
+        assertEquals(new BigDecimal("0.30"),wallet.getBalance());
+    }
+    @Test
+    void deposit_should_not_partially_apply_on_failure(){
+        UUID walletId = underTest.createWallet(BigDecimal.ZERO);
+        assertThrows(RuntimeException.class, ()->underTest.depositWithFailure(walletId, BigDecimal.TEN));
+        Wallet wallet = walletRespository.findById(walletId).get();
+        assertEquals(new BigDecimal("0.00"),wallet.getBalance());
     }
 }

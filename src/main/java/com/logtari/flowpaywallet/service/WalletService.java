@@ -5,6 +5,7 @@ import com.logtari.flowpaywallet.entity.Wallet;
 import com.logtari.flowpaywallet.repository.WalletRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -15,6 +16,7 @@ public class WalletService {
 
     private final WalletRespository walletRespository;
 
+    @Transactional
     public UUID createWallet(BigDecimal initialBalance){
         Wallet wallet = Wallet.builder()
                 .id(UUID.randomUUID())
@@ -26,9 +28,18 @@ public class WalletService {
         walletRespository.save(wallet);
         return wallet.getId();
     }
+    @Transactional
     public void deposit(UUID walletId, BigDecimal amount){
         Wallet wallet = walletRespository.findById(walletId).orElseThrow(()->new WalletNotFoundException("No Wallet found with id: %s ".formatted(walletId)));
         wallet.setBalance(wallet.getBalance().add(amount));
         walletRespository.save(wallet);
+    }
+
+    @Transactional
+    public void depositWithFailure(UUID walletId, BigDecimal amount){
+        Wallet wallet = walletRespository.findById(walletId).orElseThrow(()->new WalletNotFoundException("No Wallet found with id: %s ".formatted(walletId)));
+        wallet.setBalance(wallet.getBalance().add(amount));
+        walletRespository.save(wallet);
+        throw new RuntimeException("Something went wrong with the deposit operation");
     }
 }
